@@ -13,6 +13,7 @@ function Login() {
 
     // Backend URL
     const API_URL = import.meta.env.VITE_API_URL;
+
     console.log("API URL:", API_URL);
 
     const handleLogin = async (e) => {
@@ -40,12 +41,34 @@ function Login() {
                 }
             );
 
-            const data = await response.json();
+            // Response ko pehle text ke form mein read karenge
+            // taaki HTML response aane par JSON error na aaye
+            const responseText = await response.text();
+
+            let data;
+
+            try {
+                data = JSON.parse(responseText);
+            } catch (jsonError) {
+
+                console.error(
+                    "Server returned non-JSON response:",
+                    responseText
+                );
+
+                throw new Error(
+                    `Server returned invalid response. Status: ${response.status}`
+                );
+            }
+
+            console.log("Login Response:", data);
 
             if (!response.ok) {
 
                 setError(
-                    data.message || "Email or password incorrect"
+                    data.message ||
+                    data.error ||
+                    "Email or password incorrect"
                 );
 
                 return;
@@ -53,26 +76,35 @@ function Login() {
 
             if (!data.token) {
 
-                setError("Token not received from server");
+                setError(
+                    "Token not received from server"
+                );
 
                 return;
             }
 
-            localStorage.setItem("token", data.token);
+            // Save JWT token
+            localStorage.setItem(
+                "token",
+                data.token
+            );
 
+            // Login successful
             navigate("/");
 
-} catch (error) {
+        } catch (error) {
 
-    console.error("LOGIN ERROR:", error);
+            console.error(
+                "LOGIN ERROR:",
+                error
+            );
 
-    setError(
-        error.message || "Unable to connect to backend server"
-    );
+            setError(
+                error.message ||
+                "Unable to connect to backend server"
+            );
 
-
-        } 
-        finally {
+        } finally {
 
             setLoading(false);
         }
@@ -119,7 +151,9 @@ function Login() {
                         type="submit"
                         disabled={loading}
                     >
-                        {loading ? "Logging in..." : "Login"}
+                        {loading
+                            ? "Logging in..."
+                            : "Login"}
                     </button>
 
                 </form>
