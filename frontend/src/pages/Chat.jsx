@@ -1,15 +1,12 @@
+
 import { useState } from "react";
 import Navbar from "../components/navbar.jsx";
 
 function Chat() {
 
     const [message, setMessage] = useState("");
-
     const [messages, setMessages] = useState([]);
-
     const [loading, setLoading] = useState(false);
-
-    const token = localStorage.getItem("token");
 
     const sendMessage = async () => {
 
@@ -33,19 +30,16 @@ function Chat() {
         try {
 
             const response = await fetch(
-                "http://localhost:3000/api/chat",
+                "https://internship-final-project-production.up.railway.app/chat",
                 {
                     method: "POST",
 
                     headers: {
-                        "Content-Type": "application/json",
-
-                        "Authorization":
-                            `Bearer ${token}`
+                        "Content-Type": "application/json"
                     },
 
                     body: JSON.stringify({
-                        message: userMessage
+                        prompt: userMessage
                     })
                 }
             );
@@ -53,26 +47,24 @@ function Chat() {
             const data = await response.json();
 
             if (!response.ok) {
-
                 throw new Error(
-                    data.message || "Chat request failed"
+                    data.error || "Chat request failed"
                 );
             }
 
             setMessages((prev) => [
-    ...prev,
-    {
-        role: "assistant",
-        content:
-            data.data?.aiResponse ||
-            data.message ||
-            "No response received"
-    }
-]);
+                ...prev,
+                {
+                    role: "assistant",
+                    content:
+                        data.response ||
+                        "No response received"
+                }
+            ]);
 
         } catch (error) {
 
-            console.error(error);
+            console.error("Chat Error:", error);
 
             setMessages((prev) => [
                 ...prev,
@@ -86,6 +78,7 @@ function Chat() {
         } finally {
 
             setLoading(false);
+
         }
     };
 
@@ -148,9 +141,7 @@ function Chat() {
 
                                 <div
                                     key={index}
-                                    className={
-                                        `message ${msg.role}`
-                                    }
+                                    className={`message ${msg.role}`}
                                 >
 
                                     <div className="message-content">
@@ -203,3 +194,4 @@ function Chat() {
 }
 
 export default Chat;
+

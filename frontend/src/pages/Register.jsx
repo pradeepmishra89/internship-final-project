@@ -17,6 +17,9 @@ function Register() {
 
     const navigate = useNavigate();
 
+    // Backend URL
+    const API_URL = import.meta.env.VITE_API_URL;
+
     const handleChange = (e) => {
 
         setForm({
@@ -36,7 +39,7 @@ function Register() {
         try {
 
             const response = await fetch(
-                "http://localhost:3000/api/user",
+                `${API_URL}/api/user`,
                 {
                     method: "POST",
 
@@ -190,3 +193,4 @@ function Register() {
 }
 
 export default Register;
+

@@ -11,6 +11,9 @@ function Login() {
 
     const navigate = useNavigate();
 
+    // Backend URL
+    const API_URL = import.meta.env.VITE_API_URL;
+
     const handleLogin = async (e) => {
 
         e.preventDefault();
@@ -21,7 +24,7 @@ function Login() {
         try {
 
             const response = await fetch(
-                "http://localhost:3000/api/login",
+                `${API_URL}/api/login`,
                 {
                     method: "POST",
 
@@ -141,3 +144,4 @@ function Login() {
 }
 
 export default Login;
+
