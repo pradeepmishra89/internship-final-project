@@ -13,6 +13,7 @@ function Login() {
 
     // Backend URL
     const API_URL = import.meta.env.VITE_API_URL;
+    console.log("API URL:", API_URL);
 
     const handleLogin = async (e) => {
 
@@ -61,15 +62,17 @@ function Login() {
 
             navigate("/");
 
-        } catch (error) {
+} catch (error) {
 
-            console.error(error);
+    console.error("LOGIN ERROR:", error);
 
-            setError(
-                "Unable to connect to backend server"
-            );
+    setError(
+        error.message || "Unable to connect to backend server"
+    );
 
-        } finally {
+
+        } 
+        finally {
 
             setLoading(false);
         }
