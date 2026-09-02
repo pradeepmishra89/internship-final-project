@@ -1,11 +1,18 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navbar from "../components/navbar.jsx";
 
 function Chat() {
 
     const [message, setMessage] = useState("");
-    const [messages, setMessages] = useState([]);
+    const [messages, setMessages] = useState(() => {
+        const saved = sessionStorage.getItem("chatMessages");
+        return saved ? JSON.parse(saved) : [];
+    });
     const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        sessionStorage.setItem("chatMessages", JSON.stringify(messages));
+    }, [messages]);
 
     const sendMessage = async () => {
 
