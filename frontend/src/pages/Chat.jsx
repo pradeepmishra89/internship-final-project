@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import Navbar from "../components/navbar.jsx";
 
@@ -29,17 +28,20 @@ function Chat() {
 
         try {
 
+            const token = localStorage.getItem("token");
+
             const response = await fetch(
-                "https://internship-final-project-production.up.railway.app/chat",
+                "https://internship-final-project-production.up.railway.app/api/chat",
                 {
                     method: "POST",
 
                     headers: {
-                        "Content-Type": "application/json"
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
                     },
 
                     body: JSON.stringify({
-                        prompt: userMessage
+                        message: userMessage
                     })
                 }
             );
@@ -48,7 +50,7 @@ function Chat() {
 
             if (!response.ok) {
                 throw new Error(
-                    data.error || "Chat request failed"
+                    data.message || "Chat request failed"
                 );
             }
 
@@ -57,7 +59,7 @@ function Chat() {
                 {
                     role: "assistant",
                     content:
-                        data.response ||
+                        data.data?.aiResponse ||
                         "No response received"
                 }
             ]);
@@ -109,7 +111,7 @@ function Chat() {
                             <h2>🤖 AI Assistant</h2>
 
                             <span>
-                                Ollama AI
+                                Groq AI
                             </span>
                         </div>
 
@@ -194,4 +196,3 @@ function Chat() {
 }
 
 export default Chat;
-
