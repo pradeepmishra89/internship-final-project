@@ -1,7 +1,7 @@
 // SAHI TAREEKA (pool use karo):
 import mysql from "mysql2/promise";
 
-const pool = mysql.createPool({
+const db = mysql.createPool({
   host: process.env.DATABASE_HOST,
   port: process.env.DATABASE_PORT,
   user: process.env.DATABASE_USER,
@@ -12,4 +12,4 @@ const pool = mysql.createPool({
   queueLimit: 0
 });
 
-export default pool;
+export default db;
