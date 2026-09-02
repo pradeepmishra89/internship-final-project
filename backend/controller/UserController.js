@@ -77,10 +77,30 @@ export const handleGetUserByEmail = async (req, res) => {
 
 export const handleAddUser = async (req, res) => {
   try {
-    const { name, email, contact, age,password } = req.body;
+    const { name, email, contact, age, password } = req.body;
 
     if (!name || !email || !contact || !age || !password) {
       return res.status(400).json({ success: false, message: "All fields are required" });
+    }
+
+    // Password validation: min 6 chars, 1 capital letter, 1 number, 1 special character
+    const passwordRegex = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).{6,}$/;
+
+    if (!passwordRegex.test(password)) {
+      return res.status(400).json({
+        success: false,
+        message: "Password must be at least 6 characters long and include one capital letter, one number, and one special character"
+      });
+    }
+
+    // Contact number validation: exactly 10 digits
+    const contactRegex = /^\d{10}$/;
+
+    if (!contactRegex.test(contact)) {
+      return res.status(400).json({
+        success: false,
+        message: "Contact number must be exactly 10 digits"
+      });
     }
 
     const existingUser = await getUserByEmail(email);
