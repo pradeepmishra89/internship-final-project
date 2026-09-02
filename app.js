@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import { router } from "./backend/routes/UserRouter.js";
+import pdfRouter from "./backend/routes/pdfRouter.js";
 
 const app = express();
 
@@ -17,6 +18,7 @@ app.get("/", (req, res) => {
 
 // API routes
 app.use("/api", router);
+app.use("/api/pdf", pdfRouter);
 
 // Railway port
 const port = process.env.PORT || 3000;
