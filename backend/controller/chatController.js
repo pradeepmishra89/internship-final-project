@@ -1,5 +1,8 @@
-import { saveChat,getChatHistoryByUserId } from "../models/model.js";
-import ollama from "ollama";
+import { saveChat, getChatHistoryByUserId } from "../models/model.js";
+import Groq from "groq-sdk";
+
+const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+
 export const chat = async (req, res) => {
     try {
 
@@ -14,8 +17,8 @@ export const chat = async (req, res) => {
 
         const userId = req.user.id;
 
-        const response = await ollama.chat({
-          model: "llama3.2:latest",
+        const response = await groq.chat.completions.create({
+            model: "llama-3.3-70b-versatile",
             messages: [
                 {
                     role: "user",
@@ -24,7 +27,7 @@ export const chat = async (req, res) => {
             ]
         });
 
-        const aiResponse = response.message.content;
+        const aiResponse = response.choices[0].message.content;
 
         await saveChat(
             userId,
@@ -55,7 +58,6 @@ export const chat = async (req, res) => {
 export const getChatHistory = async (req, res) => {
     try {
 
-        // JWT middleware se user ID milegi
         const userId = req.user.id;
 
         const history = await getChatHistoryByUserId(userId);
