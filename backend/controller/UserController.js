@@ -82,7 +82,11 @@ export const handleAddUser = async (req, res) => {
     if (!name || !email || !contact || !age || !password) {
       return res.status(400).json({ success: false, message: "All fields are required" });
     }
-
+       if (age <= 0) {
+    return res.status(400).json({
+        message: "Age must be greater than 0"
+    });
+}
     // Password validation: min 6 chars, 1 capital letter, 1 number, 1 special character
     const passwordRegex = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).{6,}$/;
 
