@@ -145,8 +145,6 @@ export const getProfile = async (req, res) => {
         message: "User not found"
       });
     }
-
-    // Password kabhi frontend ko mat bhejo
     const { password, ...userData } = user;
 
     return res.status(200).json({

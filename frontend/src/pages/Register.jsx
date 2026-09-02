@@ -98,7 +98,7 @@ function Register() {
                     Register a new account
                 </p>
 
-                <form onSubmit={handleRegister}>
+                <form onSubmit={handleRegister} autoComplete="off">
 
                     <label>Name</label>
 
@@ -107,6 +107,7 @@ function Register() {
                         placeholder="Enter your name"
                         value={form.name}
                         onChange={handleChange}
+                        autoComplete="off"
                         required
                     />
 
@@ -118,6 +119,7 @@ function Register() {
                         placeholder="Enter your email"
                         value={form.email}
                         onChange={handleChange}
+                        autoComplete="new-email"
                         required
                     />
 
@@ -128,6 +130,7 @@ function Register() {
                         placeholder="Enter contact number"
                         value={form.contact}
                         onChange={handleChange}
+                        autoComplete="off"
                         required
                     />
 
@@ -139,6 +142,7 @@ function Register() {
                         placeholder="Enter age"
                         value={form.age}
                         onChange={handleChange}
+                        autoComplete="off"
                         required
                     />
 
@@ -150,6 +154,7 @@ function Register() {
                         placeholder="Enter password"
                         value={form.password}
                         onChange={handleChange}
+                        autoComplete="new-password"
                         required
                     />
 
@@ -193,4 +198,3 @@ function Register() {
 }
 
 export default Register;
-
