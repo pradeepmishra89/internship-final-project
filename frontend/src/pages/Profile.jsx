@@ -14,6 +14,14 @@ function Profile() {
     });
     const [message, setMessage] = useState("");
 
+    const [showPasswordForm, setShowPasswordForm] = useState(false);
+    const [passwordData, setPasswordData] = useState({
+        oldPassword: "",
+        password: "",
+        confirmPassword: ""
+    });
+    const [passwordMessage, setPasswordMessage] = useState("");
+
     const fetchProfile = async () => {
         try {
             const token = localStorage.getItem("token");
@@ -85,6 +93,60 @@ function Profile() {
         } catch (error) {
             console.error("Update Error:", error);
             setMessage(error.message);
+        }
+    };
+
+    const handlePasswordChange = (e) => {
+        setPasswordData({
+            ...passwordData,
+            [e.target.name]: e.target.value
+        });
+    };
+
+    const handleChangePassword = async () => {
+        setPasswordMessage("");
+
+        if (!passwordData.password || !passwordData.confirmPassword) {
+            setPasswordMessage("Please fill all required fields.");
+            return;
+        }
+
+        if (passwordData.password !== passwordData.confirmPassword) {
+            setPasswordMessage("New password and confirm password do not match.");
+            return;
+        }
+
+        try {
+            const token = localStorage.getItem("token");
+
+            const response = await fetch(
+                `https://internship-final-project-production.up.railway.app/api/change-password/${profile.id}`,
+                {
+                    method: "PATCH",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        oldPassword: passwordData.oldPassword,
+                        password: passwordData.password
+                    })
+                }
+            );
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || "Failed to change password");
+            }
+
+            setPasswordMessage("Password changed successfully!");
+            setPasswordData({ oldPassword: "", password: "", confirmPassword: "" });
+            setShowPasswordForm(false);
+
+        } catch (error) {
+            console.error("Change Password Error:", error);
+            setPasswordMessage(error.message);
         }
     };
 
@@ -224,6 +286,90 @@ function Profile() {
                         </div>
                     )}
 
+                    <div style={styles.passwordSection}>
+
+                        {!showPasswordForm ? (
+                            <button
+                                style={styles.secondaryButton}
+                                onClick={() => setShowPasswordForm(true)}
+                            >
+                                Change Password
+                            </button>
+                        ) : (
+                            <div style={styles.form}>
+
+                                <h3 style={styles.sectionTitle}>
+                                    Change Password
+                                </h3>
+
+                                {passwordMessage && (
+                                    <div style={styles.message}>
+                                        {passwordMessage}
+                                    </div>
+                                )}
+
+                                <div style={styles.formGroup}>
+                                    <label style={styles.formLabel}>Old Password</label>
+                                    <input
+                                        style={styles.input}
+                                        type="password"
+                                        name="oldPassword"
+                                        value={passwordData.oldPassword}
+                                        onChange={handlePasswordChange}
+                                    />
+                                </div>
+
+                                <div style={styles.formGroup}>
+                                    <label style={styles.formLabel}>New Password</label>
+                                    <input
+                                        style={styles.input}
+                                        type="password"
+                                        name="password"
+                                        value={passwordData.password}
+                                        onChange={handlePasswordChange}
+                                    />
+                                </div>
+
+                                <div style={styles.formGroup}>
+                                    <label style={styles.formLabel}>Confirm New Password</label>
+                                    <input
+                                        style={styles.input}
+                                        type="password"
+                                        name="confirmPassword"
+                                        value={passwordData.confirmPassword}
+                                        onChange={handlePasswordChange}
+                                    />
+                                </div>
+
+                                <div style={styles.buttonRow}>
+                                    <button
+                                        style={styles.primaryButton}
+                                        onClick={handleChangePassword}
+                                    >
+                                        Update Password
+                                    </button>
+
+                                    <button
+                                        style={styles.secondaryButton}
+                                        onClick={() => {
+                                            setShowPasswordForm(false);
+                                            setPasswordMessage("");
+                                            setPasswordData({
+                                                oldPassword: "",
+                                                password: "",
+                                                confirmPassword: ""
+                                            });
+                                        }}
+                                    >
+                                        Cancel
+                                    </button>
+                                </div>
+
+                            </div>
+                        )}
+
+                    </div>
+
                 </div>
 
             </main>
@@ -360,8 +506,18 @@ const styles = {
         fontSize: "15px",
         fontWeight: "600",
         cursor: "pointer"
+    },
+    passwordSection: {
+        marginTop: "24px",
+        paddingTop: "24px",
+        borderTop: "1px solid #e2e8f0"
+    },
+    sectionTitle: {
+        margin: "0 0 4px 0",
+        fontSize: "16px",
+        color: "#1e293b",
+        fontWeight: "700"
     }
 };
-
 
 export default Profile;
