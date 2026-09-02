@@ -133,6 +133,74 @@ export const handleAddUser = async (req, res) => {
   }
 };
 
+export const getProfile = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const user = await getUserById(userId);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found"
+      });
+    }
+
+    // Password kabhi frontend ko mat bhejo
+    const { password, ...userData } = user;
+
+    return res.status(200).json({
+      success: true,
+      data: userData
+    });
+
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export const updateProfile = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { name, email, contact, age } = req.body;
+
+    if (!name || !email || !contact || !age) {
+      return res.status(400).json({
+        success: false,
+        message: "All fields are required"
+      });
+    }
+
+    const contactRegex = /^\d{10}$/;
+    if (!contactRegex.test(contact)) {
+      return res.status(400).json({
+        success: false,
+        message: "Contact number must be exactly 10 digits"
+      });
+    }
+
+    const result = await updateUser(name, email, contact, age, userId);
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found or nothing changed"
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Profile updated successfully",
+      data: { name, email, contact, age }
+    });
+
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 export const handleUpdateUser = async (req, res) => {
   try {
     const { id } = req.params;

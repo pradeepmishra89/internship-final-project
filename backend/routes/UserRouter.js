@@ -1,4 +1,4 @@
-import { handleAddUser, handleChangePassword, handleDeleteUser, handleGetAllUsers, handleGetUserByEmail, handleGetUserById, handleUpdateUser,login,logout} from "../controller/UserController.js";
+import { handleAddUser, handleChangePassword, handleDeleteUser, handleGetAllUsers, handleGetUserByEmail, handleGetUserById, handleUpdateUser,login,logout,getProfile,updateProfile} from "../controller/UserController.js";
 import { authMiddleware } from "../middleware/middleware.js";
 import { chat ,getChatHistory} from "../controller/chatController.js";
 import express from 'express'
@@ -25,6 +25,9 @@ router.put("/logout/:id", logout);
 router.post( '/chat', authMiddleware,chat);
 
 router.get("/chat/history",authMiddleware,getChatHistory);
+
+router.get('/profile', authMiddleware, getProfile);
+router.put('/profile', authMiddleware, updateProfile);
 
 router.get("/test", (req, res)=>{
     res.send("im working")
