@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Navbar from "../components/navbar.jsx";
 
 function Chat() {
@@ -9,28 +9,63 @@ function Chat() {
         return saved ? JSON.parse(saved) : [];
     });
     const [loading, setLoading] = useState(false);
+    const [attachment, setAttachment] = useState(null);
+    const fileInputRef = useRef(null);
 
     useEffect(() => {
         sessionStorage.setItem("chatMessages", JSON.stringify(messages));
     }, [messages]);
 
+    const handleFileSelect = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const isImage = file.type.startsWith("image/");
+        const isPdf = file.type === "application/pdf";
+
+        if (!isImage && !isPdf) {
+            alert("Only images and PDF files are supported.");
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = () => {
+            setAttachment({
+                type: isImage ? "image" : "pdf",
+                data: reader.result,
+                name: file.name
+            });
+        };
+        reader.readAsDataURL(file);
+    };
+
+    const removeAttachment = () => {
+        setAttachment(null);
+        if (fileInputRef.current) fileInputRef.current.value = "";
+    };
+
     const sendMessage = async () => {
 
-        if (!message.trim()) {
+        if (!message.trim() && !attachment) {
             return;
         }
 
         const userMessage = message;
+        const currentAttachment = attachment;
 
         setMessages((prev) => [
             ...prev,
             {
                 role: "user",
-                content: userMessage
+                content: currentAttachment
+                    ? `${userMessage} ${currentAttachment.type === "image" ? "📷" : "📄"} ${currentAttachment.name}`
+                    : userMessage
             }
         ]);
 
         setMessage("");
+        setAttachment(null);
+        if (fileInputRef.current) fileInputRef.current.value = "";
         setLoading(true);
 
         try {
@@ -48,7 +83,8 @@ function Chat() {
                     },
 
                     body: JSON.stringify({
-                        message: userMessage
+                        message: userMessage,
+                        attachment: currentAttachment
                     })
                 }
             );
@@ -139,7 +175,7 @@ function Chat() {
                                 </h2>
 
                                 <p>
-                                    Ask me anything.
+                                    Ask me anything, or attach an image/PDF.
                                 </p>
 
                             </div>
@@ -174,7 +210,56 @@ function Chat() {
 
                     </div>
 
+                    {attachment && (
+                        <div style={{
+                            padding: "8px 16px",
+                            background: "#eef2ff",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                            fontSize: "13px"
+                        }}>
+                            <span>
+                                {attachment.type === "image" ? "📷" : "📄"} {attachment.name}
+                            </span>
+                            <button
+                                onClick={removeAttachment}
+                                style={{
+                                    border: "none",
+                                    background: "transparent",
+                                    cursor: "pointer",
+                                    color: "#4338ca",
+                                    fontWeight: "600"
+                                }}
+                            >
+                                Remove
+                            </button>
+                        </div>
+                    )}
+
                     <div className="chat-input">
+
+                        <input
+                            type="file"
+                            accept="image/*,application/pdf"
+                            ref={fileInputRef}
+                            onChange={handleFileSelect}
+                            style={{ display: "none" }}
+                            id="fileAttach"
+                        />
+
+                        <label
+                            htmlFor="fileAttach"
+                            style={{
+                                cursor: "pointer",
+                                display: "flex",
+                                alignItems: "center",
+                                padding: "0 8px",
+                                fontSize: "20px"
+                            }}
+                        >
+                            📎
+                        </label>
 
                         <textarea
                             value={message}
