@@ -1,8 +1,10 @@
 import { saveChat, getChatHistoryByUserId } from "../models/model.js";
 import Groq from "groq-sdk";
-import pdf from "pdf-parse";
+import { PDFParse } from "pdf-parse";
 
-const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+const groq = new Groq({
+    apiKey: process.env.GROQ_API_KEY
+});
 
 export const chat = async (req, res) => {
     try {
@@ -20,9 +22,11 @@ export const chat = async (req, res) => {
         let aiResponse;
         let messageToSave = message || "";
 
+        // =========================
+        // IMAGE ATTACHMENT
+        // =========================
         if (attachment && attachment.type === "image") {
 
-            // Image ke liye Groq ka vision model
             const response = await groq.chat.completions.create({
                 model: "qwen/qwen3.6-27b",
                 messages: [
@@ -45,32 +49,61 @@ export const chat = async (req, res) => {
             });
 
             aiResponse = response.choices[0].message.content;
-            messageToSave = `[Image: ${attachment.name}] ${message || ""}`;
 
-        } else if (attachment && attachment.type === "pdf") {
+            messageToSave =
+                `[Image: ${attachment.name}] ${message || ""}`;
 
-            // PDF se text extract karo
+        }
+
+        // =========================
+        // PDF ATTACHMENT
+        // =========================
+        else if (attachment && attachment.type === "pdf") {
+
             const base64Data = attachment.data.split(",")[1];
+
+            if (!base64Data) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Invalid PDF attachment"
+                });
+            }
+
             const pdfBuffer = Buffer.from(base64Data, "base64");
-            const pdfData = await pdf(pdfBuffer);
-            const pdfText = pdfData.text.slice(0, 8000);
+
+            // pdf-parse v2.x API
+            const parser = new PDFParse({
+                data: pdfBuffer
+            });
+
+            const result = await parser.getText();
+
+            const pdfText = result.text.slice(0, 8000);
+
+            await parser.destroy();
 
             const response = await groq.chat.completions.create({
                 model: "openai/gpt-oss-20b",
                 messages: [
                     {
                         role: "user",
-                        content: `Document content:\n\n${pdfText}\n\nUser question: ${message || "Summarize this document."}`
+                        content:
+                            `Document content:\n\n${pdfText}\n\nUser question: ${message || "Summarize this document."}`
                     }
                 ]
             });
 
             aiResponse = response.choices[0].message.content;
-            messageToSave = `[PDF: ${attachment.name}] ${message || ""}`;
 
-        } else {
+            messageToSave =
+                `[PDF: ${attachment.name}] ${message || ""}`;
+        }
 
-            // Normal text-only chat
+        // =========================
+        // NORMAL TEXT CHAT
+        // =========================
+        else {
+
             const response = await groq.chat.completions.create({
                 model: "openai/gpt-oss-20b",
                 messages: [
@@ -84,6 +117,9 @@ export const chat = async (req, res) => {
             aiResponse = response.choices[0].message.content;
         }
 
+        // =========================
+        // SAVE CHAT
+        // =========================
         await saveChat(
             userId,
             messageToSave,
@@ -100,7 +136,7 @@ export const chat = async (req, res) => {
 
     } catch (error) {
 
-        console.log(error);
+        console.error("Chat Error:", error);
 
         return res.status(500).json({
             success: false,
@@ -110,6 +146,9 @@ export const chat = async (req, res) => {
 };
 
 
+// =========================
+// GET CHAT HISTORY
+// =========================
 export const getChatHistory = async (req, res) => {
     try {
 
@@ -124,7 +163,7 @@ export const getChatHistory = async (req, res) => {
 
     } catch (error) {
 
-        console.log(error);
+        console.error("Chat History Error:", error);
 
         return res.status(500).json({
             success: false,
@@ -132,3 +171,4 @@ export const getChatHistory = async (req, res) => {
         });
     }
 };
+
