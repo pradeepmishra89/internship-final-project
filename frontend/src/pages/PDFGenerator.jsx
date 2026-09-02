@@ -24,12 +24,14 @@ const PDFGenerator = () => {
                 "https://internship-final-project-7v0x.onrender.com/api/pdf/generate",
                 {
                     method: "POST",
+
                     headers: {
                         "Content-Type": "application/json",
                         ...(token && {
                             Authorization: `Bearer ${token}`,
                         }),
                     },
+
                     body: JSON.stringify({
                         prompt: prompt.trim(),
                     }),
@@ -70,7 +72,6 @@ const PDFGenerator = () => {
 
             document.body.appendChild(link);
 
-            // Automatically download
             link.click();
 
             // Cleanup
@@ -78,14 +79,16 @@ const PDFGenerator = () => {
             window.URL.revokeObjectURL(url);
 
             setPrompt("");
-            setSuccess("PDF generated and downloaded successfully!");
+            setSuccess(
+                "Your PDF has been generated and downloaded successfully."
+            );
 
         } catch (error) {
             console.error("PDF Generation Error:", error);
 
             setError(
                 error?.message ||
-                "Something went wrong while generating PDF"
+                "Something went wrong while generating the PDF."
             );
 
         } finally {
@@ -94,148 +97,315 @@ const PDFGenerator = () => {
     };
 
     return (
-        <div style={styles.container}>
-            <div style={styles.card}>
+        <main className="pdf-page">
 
-                <h1 style={styles.heading}>
-                    AI PDF Generator
-                </h1>
+            <div className="pdf-container">
 
-                <p style={styles.subtitle}>
-                    Enter your prompt and generate a professional PDF using AI.
-                </p>
+                {/* =========================================
+                    HEADER
+                ========================================== */}
 
-                <textarea
-                    value={prompt}
-                    onChange={(e) => {
-                        setPrompt(e.target.value);
+                <div className="pdf-header">
 
-                        if (error) {
-                            setError("");
-                        }
-
-                        if (success) {
-                            setSuccess("");
-                        }
-                    }}
-                    placeholder="Example: Create a professional resume for a Java Backend Developer with 2 years of experience..."
-                    rows={8}
-                    style={styles.textarea}
-                    disabled={loading}
-                />
-
-                {error && (
-                    <div style={styles.error}>
-                        {error}
+                    <div className="pdf-icon">
+                        <span>✦</span>
                     </div>
-                )}
 
-                {success && (
-                    <div style={styles.success}>
-                        {success}
+                    <div>
+                        <span className="pdf-label">
+                            NEXA AI
+                        </span>
+
+                        <h1>
+                            AI PDF Generator
+                        </h1>
+
+                        <p>
+                            Turn your ideas into beautifully structured
+                            documents with the power of AI.
+                        </p>
                     </div>
-                )}
 
-                <button
-                    onClick={generatePDF}
-                    disabled={loading}
-                    style={{
-                        ...styles.button,
-                        opacity: loading ? 0.7 : 1,
-                        cursor: loading
-                            ? "not-allowed"
-                            : "pointer",
-                    }}
-                >
-                    {loading
-                        ? "Generating PDF..."
-                        : "Generate PDF"}
-                </button>
+                </div>
+
+
+                {/* =========================================
+                    MAIN CARD
+                ========================================== */}
+
+                <div className="pdf-card">
+
+                    <div className="pdf-card-header">
+
+                        <div>
+                            <span className="pdf-section-label">
+                                CREATE DOCUMENT
+                            </span>
+
+                            <h2>
+                                What would you like to create?
+                            </h2>
+                        </div>
+
+                        <div className="pdf-file-badge">
+                            <span>PDF</span>
+                        </div>
+
+                    </div>
+
+
+                    {/* =====================================
+                        PROMPT
+                    ====================================== */}
+
+                    <div className="pdf-form-group">
+
+                        <label htmlFor="pdf-prompt">
+                            Describe your document
+                        </label>
+
+                        <textarea
+                            id="pdf-prompt"
+                            value={prompt}
+                            onChange={(e) => {
+                                setPrompt(e.target.value);
+
+                                if (error) {
+                                    setError("");
+                                }
+
+                                if (success) {
+                                    setSuccess("");
+                                }
+                            }}
+                            placeholder="Example: Create a professional resume for a Java Backend Developer with 2 years of experience..."
+                            rows={9}
+                            disabled={loading}
+                        />
+
+                        <div className="pdf-input-footer">
+
+                            <span>
+                                ✦ AI-powered document generation
+                            </span>
+
+                            <span>
+                                {prompt.length} characters
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    {/* =====================================
+                        ERROR
+                    ====================================== */}
+
+                    {error && (
+                        <div className="pdf-message pdf-error">
+
+                            <div className="message-status-icon">
+                                !
+                            </div>
+
+                            <div>
+                                <strong>
+                                    Generation failed
+                                </strong>
+
+                                <p>
+                                    {error}
+                                </p>
+                            </div>
+
+                        </div>
+                    )}
+
+
+                    {/* =====================================
+                        SUCCESS
+                    ====================================== */}
+
+                    {success && (
+                        <div className="pdf-message pdf-success">
+
+                            <div className="message-status-icon">
+                                ✓
+                            </div>
+
+                            <div>
+                                <strong>
+                                    PDF ready
+                                </strong>
+
+                                <p>
+                                    {success}
+                                </p>
+                            </div>
+
+                        </div>
+                    )}
+
+
+                    {/* =====================================
+                        GENERATE BUTTON
+                    ====================================== */}
+
+                    <button
+                        type="button"
+                        onClick={generatePDF}
+                        disabled={loading}
+                        className="pdf-generate-btn"
+                    >
+
+                        {loading ? (
+                            <>
+                                <span className="pdf-spinner"></span>
+
+                                <span>
+                                    Creating your PDF...
+                                </span>
+                            </>
+                        ) : (
+                            <>
+                                <span className="pdf-btn-icon">
+                                    ↓
+                                </span>
+
+                                <span>
+                                    Generate PDF
+                                </span>
+
+                                <span className="pdf-btn-arrow">
+                                    →
+                                </span>
+                            </>
+                        )}
+
+                    </button>
+
+
+                    {/* =====================================
+                        FEATURES
+                    ====================================== */}
+
+                    <div className="pdf-features">
+
+                        <div className="pdf-feature">
+
+                            <span className="pdf-feature-icon">
+                                ✦
+                            </span>
+
+                            <div>
+                                <strong>
+                                    AI structured
+                                </strong>
+
+                                <small>
+                                    Clean and organized content
+                                </small>
+                            </div>
+
+                        </div>
+
+
+                        <div className="pdf-feature">
+
+                            <span className="pdf-feature-icon">
+                                ◈
+                            </span>
+
+                            <div>
+                                <strong>
+                                    Instant generation
+                                </strong>
+
+                                <small>
+                                    Your document is ready in seconds
+                                </small>
+                            </div>
+
+                        </div>
+
+
+                        <div className="pdf-feature">
+
+                            <span className="pdf-feature-icon">
+                                ↓
+                            </span>
+
+                            <div>
+                                <strong>
+                                    Easy download
+                                </strong>
+
+                                <small>
+                                    Download directly as PDF
+                                </small>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                {/* =========================================
+                    EXAMPLES
+                ========================================== */}
+
+                <div className="pdf-examples">
+
+                    <span className="pdf-examples-label">
+                        NEED INSPIRATION?
+                    </span>
+
+                    <div className="pdf-example-list">
+
+                        <button
+                            type="button"
+                            onClick={() =>
+                                setPrompt(
+                                    "Create a professional resume for a Java Backend Developer with 2 years of experience."
+                                )
+                            }
+                        >
+                            Professional Resume
+                        </button>
+
+                        <button
+                            type="button"
+                            onClick={() =>
+                                setPrompt(
+                                    "Create a detailed project report for a full-stack web application."
+                                )
+                            }
+                        >
+                            Project Report
+                        </button>
+
+                        <button
+                            type="button"
+                            onClick={() =>
+                                setPrompt(
+                                    "Create a professional business proposal for a software development company."
+                                )
+                            }
+                        >
+                            Business Proposal
+                        </button>
+
+                    </div>
+
+                </div>
 
             </div>
-        </div>
+
+        </main>
     );
 };
 
-const styles = {
-    container: {
-        minHeight: "100vh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        background: "#f5f7fb",
-        padding: "20px",
-        boxSizing: "border-box",
-    },
-
-    card: {
-        width: "100%",
-        maxWidth: "700px",
-        background: "#ffffff",
-        padding: "35px",
-        borderRadius: "15px",
-        boxShadow: "0 5px 25px rgba(0, 0, 0, 0.1)",
-        boxSizing: "border-box",
-    },
-
-    heading: {
-        margin: "0 0 10px",
-        fontSize: "30px",
-        textAlign: "center",
-        color: "#222",
-    },
-
-    subtitle: {
-        textAlign: "center",
-        color: "#666",
-        marginBottom: "25px",
-        lineHeight: "1.5",
-    },
-
-    textarea: {
-        width: "100%",
-        padding: "15px",
-        borderRadius: "10px",
-        border: "1px solid #ccc",
-        fontSize: "16px",
-        resize: "vertical",
-        outline: "none",
-        boxSizing: "border-box",
-        fontFamily: "Arial, sans-serif",
-        lineHeight: "1.5",
-    },
-
-    button: {
-        width: "100%",
-        marginTop: "20px",
-        padding: "14px",
-        border: "none",
-        borderRadius: "10px",
-        background: "#2563eb",
-        color: "#ffffff",
-        fontSize: "17px",
-        fontWeight: "600",
-        transition: "0.2s",
-    },
-
-    error: {
-        marginTop: "12px",
-        padding: "10px 12px",
-        borderRadius: "8px",
-        background: "#fee2e2",
-        color: "#b91c1c",
-        fontSize: "14px",
-    },
-
-    success: {
-        marginTop: "12px",
-        padding: "10px 12px",
-        borderRadius: "8px",
-        background: "#dcfce7",
-        color: "#15803d",
-        fontSize: "14px",
-    },
-};
-
 export default PDFGenerator;
-
