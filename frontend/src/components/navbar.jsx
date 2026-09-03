@@ -131,7 +131,6 @@ function Navbar() {
                     className="mobile-logout-btn"
                     onClick={handleLogout}
                 >
-                    <span>↪</span>
                     <span>Logout</span>
                 </button>
 
