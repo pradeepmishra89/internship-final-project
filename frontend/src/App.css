@@ -4967,22 +4967,6 @@ button {
 }
 
 
-/* =====================================================
-   EMPTY STATE ATTACHMENT MENU
-===================================================== */
-
-.empty-attachment-menu {
-    left: 50%;
-    bottom: 60px;
-    transform: translateX(-50%);
-    text-align: left;
-}
-
-.empty-attachment-menu::after {
-    display: none;
-}
-
-
 /* =========================================================
    NEXA — CROSS-DEVICE POLISH (NEWLY ADDED)
    iOS zoom fix, dynamic viewport height, safe-area support,
