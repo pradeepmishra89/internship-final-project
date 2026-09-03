@@ -5192,6 +5192,26 @@ button {
 
 
 /* ---------------------------------------------------------
+   Fix: stack mobile brand above the form card instead of
+   side-by-side (auth-form-section needs flex-direction:
+   column on mobile, since the base rule only sets
+   align-items/justify-content without a direction).
+--------------------------------------------------------- */
+
+@media (max-width: 900px) {
+
+    .auth-form-section {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .auth-mobile-brand {
+        flex-direction: row;
+    }
+}
+
+
+/* ---------------------------------------------------------
    Ultra-small phones (<340px) extra safety margin
 --------------------------------------------------------- */
 
@@ -5213,41 +5233,26 @@ button {
         font-size: 12px;
     }
 }
-/* Navbar mobile menu fix */
 
-@media (max-width: 700px) {
-    .mobile-nav {
-        display: none;
+
+/* ---------------------------------------------------------
+   Fix: stack mobile auth brand above the form card instead
+   of side-by-side (was rendering as a row on small screens)
+--------------------------------------------------------- */
+
+@media (max-width: 900px) {
+
+    .auth-form-section {
+        flex-direction: column;
+        align-items: center;
     }
 
-    .mobile-nav.show {
-        display: flex;
+    .auth-mobile-brand {
+        flex-direction: row;
+        width: 100%;
     }
-}
 
-.menu-toggle {
-    flex-direction: column;
-    gap: 5px;
-}
-
-.menu-toggle span {
-    width: 20px;
-    height: 2px;
-    background: var(--text);
-    border-radius: 2px;
-    transition:
-        transform 0.25s ease,
-        opacity 0.25s ease;
-}
-
-.menu-toggle.open span:nth-child(1) {
-    transform: translateY(7px) rotate(45deg);
-}
-
-.menu-toggle.open span:nth-child(2) {
-    opacity: 0;
-}
-
-.menu-toggle.open span:nth-child(3) {
-    transform: translateY(-7px) rotate(-45deg);
+    .auth-form-wrapper {
+        width: 100%;
+    }
 }
