@@ -69,7 +69,7 @@ function Navbar() {
                         className="logout-btn"
                         onClick={handleLogout}
                     >
-                        <span>↪</span>
+                        <span></span>
                         <span>Logout</span>
                     </button>
 
