@@ -21,7 +21,15 @@ function Chat() {
     const [loading, setLoading] = useState(false);
     const [attachment, setAttachment] = useState(null);
 
-    const fileInputRef = useRef(null);
+    // Attachment menu
+    const [showAttachMenu, setShowAttachMenu] = useState(false);
+
+    // =====================================================
+    // REFS
+    // =====================================================
+
+    const imageInputRef = useRef(null);
+    const pdfInputRef = useRef(null);
     const messagesEndRef = useRef(null);
 
     // =====================================================
@@ -61,6 +69,44 @@ function Chat() {
             behavior: "smooth"
         });
     }, [messages, loading]);
+
+    // =====================================================
+    // OPEN ATTACHMENT MENU
+    // =====================================================
+
+    const toggleAttachMenu = () => {
+        if (loading) return;
+
+        setShowAttachMenu((prev) => !prev);
+    };
+
+    // =====================================================
+    // OPEN IMAGE PICKER
+    // =====================================================
+
+    const openImagePicker = () => {
+        if (loading) return;
+
+        setShowAttachMenu(false);
+
+        setTimeout(() => {
+            imageInputRef.current?.click();
+        }, 0);
+    };
+
+    // =====================================================
+    // OPEN PDF PICKER
+    // =====================================================
+
+    const openPdfPicker = () => {
+        if (loading) return;
+
+        setShowAttachMenu(false);
+
+        setTimeout(() => {
+            pdfInputRef.current?.click();
+        }, 0);
+    };
 
     // =====================================================
     // HANDLE FILE SELECT
@@ -119,8 +165,12 @@ function Chat() {
     const removeAttachment = () => {
         setAttachment(null);
 
-        if (fileInputRef.current) {
-            fileInputRef.current.value = "";
+        if (imageInputRef.current) {
+            imageInputRef.current.value = "";
+        }
+
+        if (pdfInputRef.current) {
+            pdfInputRef.current.value = "";
         }
     };
 
@@ -160,9 +210,14 @@ function Chat() {
 
         setMessage("");
         setAttachment(null);
+        setShowAttachMenu(false);
 
-        if (fileInputRef.current) {
-            fileInputRef.current.value = "";
+        if (imageInputRef.current) {
+            imageInputRef.current.value = "";
+        }
+
+        if (pdfInputRef.current) {
+            pdfInputRef.current.value = "";
         }
 
         setLoading(true);
@@ -371,7 +426,9 @@ function Chat() {
                                 <h2>
                                     Your AI companion,
                                     <br />
-                                    <span>always here for you.</span>
+                                    <span>
+                                        always here for you.
+                                    </span>
                                 </h2>
 
                                 <p>
@@ -408,15 +465,53 @@ function Chat() {
 
                                     <button
                                         type="button"
-                                        onClick={() =>
-                                            fileInputRef.current?.click()
-                                        }
+                                        onClick={toggleAttachMenu}
                                     >
                                         <span>📎</span>
                                         Analyze a file
                                     </button>
 
                                 </div>
+
+                                {/* EMPTY STATE ATTACH MENU */}
+
+                                {showAttachMenu && (
+                                    <div className="attachment-menu empty-attachment-menu">
+
+                                        <button
+                                            type="button"
+                                            onClick={openImagePicker}
+                                        >
+                                            <span className="attachment-menu-icon">
+                                                🖼️
+                                            </span>
+
+                                            <span>
+                                                <strong>Image</strong>
+                                                <small>
+                                                    JPG, PNG, WEBP, GIF
+                                                </small>
+                                            </span>
+                                        </button>
+
+                                        <button
+                                            type="button"
+                                            onClick={openPdfPicker}
+                                        >
+                                            <span className="attachment-menu-icon">
+                                                📄
+                                            </span>
+
+                                            <span>
+                                                <strong>PDF</strong>
+                                                <small>
+                                                    PDF document
+                                                </small>
+                                            </span>
+                                        </button>
+
+                                    </div>
+                                )}
 
                             </div>
                         )}
@@ -589,30 +684,98 @@ function Chat() {
 
                         <div className="chat-input">
 
-                            {/* FILE INPUT */}
+                            {/* =================================================
+                                HIDDEN IMAGE INPUT
+                            ================================================= */}
 
                             <input
                                 type="file"
-                                accept="image/jpeg,image/png,image/webp,image/gif,application/pdf"
-                                ref={fileInputRef}
+                                accept="image/jpeg,image/png,image/webp,image/gif"
+                                ref={imageInputRef}
                                 onChange={handleFileSelect}
                                 disabled={loading}
-                                id="fileAttach"
+                                className="hidden-file-input"
                             />
 
-                            {/* ATTACH BUTTON */}
+                            {/* =================================================
+                                HIDDEN PDF INPUT
+                            ================================================= */}
 
-                            <label
-                                htmlFor="fileAttach"
-                                className={`attach-btn ${
-                                    loading ? "disabled" : ""
-                                }`}
-                                title="Attach image or PDF"
-                            >
-                                <span>+</span>
-                            </label>
+                            <input
+                                type="file"
+                                accept="application/pdf"
+                                ref={pdfInputRef}
+                                onChange={handleFileSelect}
+                                disabled={loading}
+                                className="hidden-file-input"
+                            />
 
-                            {/* TEXTAREA */}
+                            {/* =================================================
+                                ATTACHMENT BUTTON + MENU
+                            ================================================= */}
+
+                            <div className="attach-wrapper">
+
+                                {/* ATTACHMENT MENU */}
+
+                                {showAttachMenu && (
+                                    <div className="attachment-menu">
+
+                                        <button
+                                            type="button"
+                                            onClick={openImagePicker}
+                                        >
+                                            <span className="attachment-menu-icon">
+                                                🖼️
+                                            </span>
+
+                                            <span>
+                                                <strong>Image</strong>
+                                                <small>
+                                                    JPG, PNG, WEBP, GIF
+                                                </small>
+                                            </span>
+                                        </button>
+
+                                        <button
+                                            type="button"
+                                            onClick={openPdfPicker}
+                                        >
+                                            <span className="attachment-menu-icon">
+                                                📄
+                                            </span>
+
+                                            <span>
+                                                <strong>PDF</strong>
+                                                <small>
+                                                    PDF document
+                                                </small>
+                                            </span>
+                                        </button>
+
+                                    </div>
+                                )}
+
+                                {/* PLUS BUTTON */}
+
+                                <button
+                                    type="button"
+                                    className={`attach-btn ${
+                                        loading ? "disabled" : ""
+                                    }`}
+                                    onClick={toggleAttachMenu}
+                                    disabled={loading}
+                                    title="Attach file"
+                                    aria-label="Attach file"
+                                >
+                                    <span>+</span>
+                                </button>
+
+                            </div>
+
+                            {/* =================================================
+                                TEXTAREA
+                            ================================================= */}
 
                             <textarea
                                 value={message}
@@ -629,7 +792,9 @@ function Chat() {
                                 disabled={loading}
                             />
 
-                            {/* SEND */}
+                            {/* =================================================
+                                SEND
+                            ================================================= */}
 
                             <button
                                 type="button"

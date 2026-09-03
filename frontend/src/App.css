@@ -4820,3 +4820,164 @@ button {
         padding-right: 15px;
     }
 }
+/* =====================================================
+   ATTACHMENT MENU
+===================================================== */
+
+.hidden-file-input {
+    display: none !important;
+}
+
+.attach-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.attach-btn {
+    position: relative;
+    z-index: 2;
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 12px;
+    background: #f4f1fb;
+    color: #7c3aed;
+    font-size: 25px;
+    font-weight: 400;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.attach-btn:hover {
+    background: #ede9fe;
+    transform: translateY(-1px);
+}
+
+.attach-btn:active {
+    transform: scale(0.96);
+}
+
+.attach-btn.disabled,
+.attach-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+
+/* =====================================================
+   ATTACHMENT POPUP
+===================================================== */
+
+.attachment-menu {
+    position: absolute;
+    left: 0;
+    bottom: calc(100% + 12px);
+    width: 220px;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.98);
+    border: 1px solid #e8e3f2;
+    border-radius: 16px;
+    box-shadow: 0 18px 45px rgba(36, 24, 61, 0.15);
+    z-index: 100;
+    animation: attachmentMenuIn 0.18s ease-out;
+}
+
+.attachment-menu::after {
+    content: "";
+    position: absolute;
+    bottom: -7px;
+    left: 17px;
+    width: 13px;
+    height: 13px;
+    background: #fff;
+    border-right: 1px solid #e8e3f2;
+    border-bottom: 1px solid #e8e3f2;
+    transform: rotate(45deg);
+}
+
+.attachment-menu button {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 12px;
+    border: none;
+    border-radius: 11px;
+    background: transparent;
+    color: #211b2d;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.18s ease;
+}
+
+.attachment-menu button:hover {
+    background: #f6f3fc;
+}
+
+.attachment-menu-icon {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background: #f1edfa;
+    font-size: 18px;
+}
+
+.attachment-menu button > span:last-child {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.attachment-menu strong {
+    font-size: 14px;
+    font-weight: 600;
+    color: #27212f;
+}
+
+.attachment-menu small {
+    font-size: 11px;
+    color: #8b8495;
+}
+
+
+/* =====================================================
+   MENU ANIMATION
+===================================================== */
+
+@keyframes attachmentMenuIn {
+    from {
+        opacity: 0;
+        transform: translateY(6px) scale(0.97);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+
+/* =====================================================
+   EMPTY STATE ATTACHMENT MENU
+===================================================== */
+
+.empty-attachment-menu {
+    left: 50%;
+    bottom: 60px;
+    transform: translateX(-50%);
+    text-align: left;
+}
+
+.empty-attachment-menu::after {
+    display: none;
+}
