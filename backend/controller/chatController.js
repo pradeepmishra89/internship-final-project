@@ -17,8 +17,9 @@ const groq = new Groq({
 // CONSTANTS
 // =====================================================
 
-const TEXT_MODEL = "llama3.2:latest";
+// const TEXT_MODEL = "openai/gpt-oss-20b";
 
+const TEXT_MODEL = "llama3.2:latest";
 const VISION_MODEL = "qwen/qwen3.6-27b";
 
 const MAX_HISTORY_MESSAGES = 10;
